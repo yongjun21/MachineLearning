@@ -1,14 +1,16 @@
 ---
 title: "Machine Learning Project"
-output: html_document
+output: 
+    html_document: 
+        keep_md: true
 ---
 
 ## Introduction
-The purpose of this exercise is to apply machine learning algorithms to a prediction problem in Human Activity Recognition (HAR). Our data comes from the Weight Lifting Exercises (WLE) Dataset of the paper Qualitative Activity Recognition of Weight Lifting Exercises by Velloso, Bulling, Gellersen, Ugulino & Fuks. The aim is to predict the manner in which an exercise (unilateral dumbbell bicep curl) was being carried out by looking at data collected from a set of wearable sensors (qualitative activity recognition). The sensors (mounted to 4 spots: belt, arm, forearm & dumbbell) records accelaration, gyroscope and magnetometer readings in 3 dimension. 
+The purpose of this exercise is to apply machine learning algorithms to a prediction problem in Human Activity Recognition (HAR). Our data comes from the Weight Lifting Exercises (WLE) Dataset from the paper Qualitative Activity Recognition of Weight Lifting Exercises by Velloso, Bulling, Gellersen, Ugulino & Fuks. The aim is to predict the manner in which an exercise (Unilateral Dumbbell Bicep Curl) was being carried out by looking at data collected from a set of wearable sensors (Qualitative Activity Recognition). The sensors (mounted to 4 spots: belt, arm, forearm & dumbbell) records accelaration, gyroscope and magnetometer readings in 3 dimension. 
 
 It should be noted for this exercise unlike the original paper, we did not split the data into windows and use summary statistics as predictors. Instead, our models were trained on the raw readings therefore might be subjected to higher degree of overfitting. 
 
-We applied machine learning algorithms on 52 continuous predictors to predict which class (A,B,C,D or E) our response falls into. Classification Tree (CART) and Linear Discriminant Analysis (LDA) were first used. However, they did not performed well on the test set: CART's accuracy is 49% while LDA's is 70%. We then proceed on to ensemble model. We applied Random Forest and found it highly accurate in predicting the response class thus selected it as our final model. 10-fold cross validation was used to estimate the out-of-sample error rate (~0.5%). The chosen model was applied to twenty test cases and is able to predict the correct class for all twenty.
+We applied machine learning algorithms on 52 continuous predictors to predict which class (A,B,C,D or E) our response falls into. Classification Tree (CART) and Linear Discriminant Analysis (LDA) were first used. However, they did not performed well on the test set: CART's accuracy is 49% while LDA's is 70%. We then proceed on to ensemble models. We applied Random Forest and found it highly accurate in predicting the response class thus selected it as our final model. 10-fold cross validation was used to estimate the out-of-sample error rate (~0.5%). The chosen model was applied to twenty test cases and is able to predict the correct class for all twenty cases.
   
 ## Analysis
 ### Preparing required packages
@@ -45,7 +47,7 @@ model2 <- train(classe~.,data=training,method="lda")
 pred2 <- predict(model2,testing)
 confusionMatrix(pred2,testing$classe)
 ```
-As can be seen, accuracy for the CART and LDA model are relatively low. For all the classes, sensitivity hardly exceeds 80%. Same for positive predictive value.
+As can be seen, accuracy for the CART and LDA models are relatively low. For all the classes, sensitivity hardly exceeds 80%. Same for positive predictive value.
 
 ### Using ensemble models
 We see if ensemble models can give us better result. Random Forest was used:
@@ -54,7 +56,7 @@ model3 <- train(classe~.,data=training,method="rf",trControl=trainControl(method
 pred3 <- predict(model3,testing)
 confusionMatrix(pred3,testing$classe)
 ```
-Result from Random Forest was optimistic with accuracy close to 99% and sensitivity and positive predictive value exceeding 99% for all classes. Random Forest is chosen as our final model.
+Results from Random Forest were optimistic with accuracy close to 99% and sensitivity and positive predictive value exceeding 99% for all classes. Random Forest is chosen as our final model.
   
 ## Estimating Out-of-Sample error rate with cross validation
 ```{r,cache=TRUE}
@@ -73,7 +75,7 @@ for(k in 1:10){
 compare_perf[,1:4]
 colMeans(compare_perf)[1:4]
 ```
-Using 10-fold cross validation, we estimate out-of-sample around 0.5%.
+Using 10-fold cross validation, we estimate out-of-sample error rate to be around 0.5%.
   
 ## Applying the final model in prediction
 ```{r,cache=TRUE}
@@ -88,11 +90,11 @@ The variable importance plot shows the most important variables for identifying 
 ```{r}
 topTenImpVar
 ```
-We can see the top 10 ranking are fairly consistent and also agrees with the list for the final model which was applied on the entire training data. This shows the final chosen model is reliable across different sets of training data thus give us further confidence in our result.
+We can see the top 10 ranking are fairly consistent and also agree with the list for the final model which was applied on the entire training data. This shows the final chosen model is reliable across different sets of training data thus give us further confidence in our result.
   
 We applied our chosen model to the test cases and obtained the following results:
 ```{r}
-answer <- predict(fitModel,rawTestCases); answer
+answer <- predict(finalModel,rawTestCases); answer
 ```
   
 ## Reference
